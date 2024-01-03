@@ -3,8 +3,6 @@ import UserService from '../../service/user.service';
 import CreateUserInput from '../../type/user/create.input';
 import { BadRequestError } from '../../util/customErrors';
 
-// 예시 controller입니다. 필요에 따라 수정하거나 삭제하셔도 됩니다.
-
 export const getUserById: RequestHandler = async (req, res, next) => {
   try {
     const id = Number(req.query.id);
@@ -18,11 +16,37 @@ export const getUserById: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getUsersByAge: RequestHandler = async (req, res, next) => {
-  try {
-    const age = Number(req.params.age);
+// Params 이용 예시
+// export const getUsersByAge: RequestHandler = async (req, res, next) => {
+//   try {
+//     const age = Number(req.params.age);
 
-    const users = await UserService.getUsersByAge(age);
+//     const users = await UserService.getUsersByAge(age);
+
+//     res.json(users);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+export const getUsersByUserName: RequestHandler = async (req, res, next) => {
+  try {
+    const userName = Number(req.query.userName);
+
+    const users = await UserService.getUserById(userName);
+    // 리스트 검사 필요?
+
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUsersByBirthDate: RequestHandler = async (req, res, next) => {
+  try {
+    const birthDate = Number(req.query.birthDate); // Date 형식??
+
+    const users = await UserService.getUserById(birthDate);
 
     res.json(users);
   } catch (error) {
@@ -32,8 +56,8 @@ export const getUsersByAge: RequestHandler = async (req, res, next) => {
 
 export const createUser: RequestHandler = async (req, res, next) => {
   try {
-    const { firstName, lastName, age } = req.body as CreateUserInput;
-    const createUserInput: CreateUserInput = { firstName, lastName, age };
+    const { userName, displayName, password, birthDate } = req.body as CreateUserInput;
+    const createUserInput: CreateUserInput = { userName, displayName, password, birthDate };
 
     const user = await UserService.saveUser(createUserInput);
 
