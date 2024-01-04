@@ -13,10 +13,10 @@ export default class Candidate {
   id!: number;
 
   @ManyToOne(() => Poll, (poll) => poll.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'poll_id' })
   pollId!: Poll;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'restaurant_id' })
   restaurantId!: Restaurant;
 }

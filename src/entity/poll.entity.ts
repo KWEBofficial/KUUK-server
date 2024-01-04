@@ -15,6 +15,7 @@ export default class Poll {
   id!: number;
 
   @Column({
+    name: 'poll_name',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -24,16 +25,17 @@ export default class Poll {
   pollName!: string;
 
   @ManyToOne(() => User, (user) => user.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'created_by' })
   createdBy!: User;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  @UpdateDateColumn({ name: 'ended_at', type: 'timestamp', nullable: true })
   endedAt?: Date;
 
   @Column({
+    name: 'url',
     nullable: false,
     comment: "투표 URL"
   })

@@ -10,6 +10,7 @@ export default class Restaurant {
   id!: number;
 
   @Column({
+    name: 'restaurant_name',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -18,6 +19,7 @@ export default class Restaurant {
   restaurantName!: string;
 
   @Column({
+    name: 'location',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -26,6 +28,7 @@ export default class Restaurant {
   location!: string;
 
   @Column({
+    name: 'category',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -34,11 +37,12 @@ export default class Restaurant {
   category!: string;
 
   @Column({
+    name: 'img_dir',
     nullable: true,
     comment: '이미지 디렉토리'
   })
-  img_dir?: string;
+  imgDir?: string;
 
-  @Column()
+  @Column({ name: 'description' })
   description!: string;
 }

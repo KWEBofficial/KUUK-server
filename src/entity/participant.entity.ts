@@ -14,10 +14,11 @@ export default class Participant {
   id!: number;
 
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   userId?: User;
 
   @Column({
+    name: 'display_name',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -27,6 +28,6 @@ export default class Participant {
   displayName!: string;
 
   @ManyToOne(() => Poll, (poll) => poll.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'poll_id' })
   pollId!: Poll;
 }

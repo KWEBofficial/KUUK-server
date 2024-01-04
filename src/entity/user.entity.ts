@@ -10,15 +10,17 @@ export default class User {
   id!: number;
 
   @Column({
+    name: 'username',
     type: 'varchar',
     length: 100,
     nullable: false,
     default: 'user',
     comment: '사용자 이름',
   })
-  userName!: string;
+  username!: string;
 
   @Column({
+    name: 'display_name',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -28,6 +30,7 @@ export default class User {
   displayName!: string;
 
   @Column({
+    name: 'password',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -35,6 +38,10 @@ export default class User {
   })
   password!: string;
 
-  @Column({ type: 'timestamp', nullable: true })
-  birthDate?: Date;
+  @Column({
+    name: 'birthdate',
+    type: 'timestamp',
+    nullable: true
+  })
+  birthdate?: Date;
 }

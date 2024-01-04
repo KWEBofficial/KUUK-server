@@ -13,10 +13,11 @@ export default class Menu {
   id!: number;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'restaurant_id' })
   restaurantId!: Restaurant;
 
   @Column({
+    name: 'menu_name',
     type: 'varchar',
     length: 100,
     nullable: false,
@@ -26,6 +27,7 @@ export default class Menu {
   menuName!: string;
 
   @Column({
+    name: 'price',
     type: 'int',
     nullable: false,
     default: 0,

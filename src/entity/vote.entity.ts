@@ -13,10 +13,10 @@ export default class Vote {
   id!: number;
 
   @ManyToOne(() => Participant, (participant) => participant.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'voted_by' })
   votedBy!: Participant;
 
   @ManyToOne(() => Candidate, (candidate) => candidate.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'candidate_id' })
   candidateId!: Candidate;
 }
