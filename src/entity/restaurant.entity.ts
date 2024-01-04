@@ -23,7 +23,7 @@ export default class Restaurant {
     type: 'varchar',
     length: 100,
     nullable: false,
-    comment: '식당 장소'
+    comment: '식당 위치'
   })
   location!: string;
 
