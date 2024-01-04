@@ -29,11 +29,11 @@ export const getUserById: RequestHandler = async (req, res, next) => {
 //   }
 // };
 
-export const getUsersByUserName: RequestHandler = async (req, res, next) => {
+export const getUsersByUsername: RequestHandler = async (req, res, next) => {
   try {
-    const userName = Number(req.query.userName);
+    const username = Number(req.query.username);
 
-    const users = await UserService.getUserById(userName);
+    const users = await UserService.getUserById(username);
     // 리스트 검사 필요?
 
     res.json(users);
@@ -42,11 +42,11 @@ export const getUsersByUserName: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getUsersByBirthDate: RequestHandler = async (req, res, next) => {
+export const getUsersByBirthdate: RequestHandler = async (req, res, next) => {
   try {
-    const birthDate = Number(req.query.birthDate); // Date 형식??
+    const birthdate = Number(req.query.birthdate); // Date 형식??
 
-    const users = await UserService.getUserById(birthDate);
+    const users = await UserService.getUserById(birthdate);
 
     res.json(users);
   } catch (error) {
@@ -56,8 +56,8 @@ export const getUsersByBirthDate: RequestHandler = async (req, res, next) => {
 
 export const createUser: RequestHandler = async (req, res, next) => {
   try {
-    const { userName, displayName, password, birthDate } = req.body as CreateUserInput;
-    const createUserInput: CreateUserInput = { userName, displayName, password, birthDate };
+    const { username, displayName, password, birthdate } = req.body as CreateUserInput;
+    const createUserInput: CreateUserInput = { username, displayName, password, birthdate };
 
     const user = await UserService.saveUser(createUserInput);
 

@@ -12,17 +12,17 @@ export default class UserService {
     }
   }
 
-  static async getUsersByUserName(userName: string): Promise<User[]> {
+  static async getUsersByUsername(username: string): Promise<User[]> {
     try {
-      return await UserRepository.find({ where: { userName } });
+      return await UserRepository.find({ where: { username } });
     } catch (error) {
       throw new InternalServerError('유저 정보를 불러오는데 실패했습니다.');
     }
   }
 
-  static async getUsersByBirthDate(birthDate: Date): Promise<User[]> {
+  static async getUsersByBirthdate(birthdate: Date): Promise<User[]> {
     try {
-      return await UserRepository.find({ where: { birthDate } });
+      return await UserRepository.find({ where: { birthdate } });
     } catch (error) {
       throw new InternalServerError('유저 정보를 불러오는데 실패했습니다.');
     }

@@ -33,9 +33,9 @@ export const createPoll: RequestHandler = async (req, res, next) => {
     const { pollName, createdBy, url, createdAt, endedAt } = req.body as CreatePollInput;
     const createPollInput: CreatePollInput = { pollName, createdBy, url, createdAt, endedAt };
 
-    const user = await PollService.createPoll(createPollInput);
+    const poll = await PollService.createPoll(createPollInput);
 
-    res.status(201).json(user.id);
+    res.status(201).json(poll.id);
   } catch (error) {
     next(error);
   }
