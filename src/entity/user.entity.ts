@@ -15,7 +15,7 @@ export default class User {
     length: 100,
     nullable: false,
     default: 'user',
-    comment: '사용자 이름',
+    comment: '사용자 아이디',
   })
   username!: string;
 
