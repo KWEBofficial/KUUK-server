@@ -41,7 +41,6 @@ export default class User {
   @Column({
     name: 'birthdate',
     type: 'timestamp',
-    nullable: true
   })
-  birthdate?: Date | null;
+  birthdate!: Date;
 }
