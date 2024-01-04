@@ -32,7 +32,7 @@ export default class Poll {
   createdAt!: Date;
 
   @UpdateDateColumn({ name: 'ended_at', type: 'timestamp', nullable: true })
-  endedAt?: Date;
+  endedAt?: Date | null;
 
   @Column({
     name: 'url',

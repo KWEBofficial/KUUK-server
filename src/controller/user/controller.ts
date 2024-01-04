@@ -44,9 +44,10 @@ export const getUsersByUsername: RequestHandler = async (req, res, next) => {
 
 export const getUsersByBirthdate: RequestHandler = async (req, res, next) => {
   try {
-    const birthdate = Number(req.query.birthdate); // Date 형식??
+    const birthdate = new Date(Date.parse(String(req.query.birthdate))); // 임시 parsing
+    if (!birthdate) throw new BadRequestError('유효하지 않은 생년월일입니다.');
 
-    const users = await UserService.getUserById(birthdate);
+    const users = await UserService.getUsersByBirthdate(birthdate);
 
     res.json(users);
   } catch (error) {

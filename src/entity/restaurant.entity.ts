@@ -41,7 +41,7 @@ export default class Restaurant {
     nullable: true,
     comment: '이미지 디렉토리'
   })
-  imgDir?: string;
+  imgDir?: string; // 여긴 null 추가 시 Object로 인식되어 mysql로 처리 못함
 
   @Column({ name: 'description' })
   description!: string;

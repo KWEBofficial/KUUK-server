@@ -43,5 +43,5 @@ export default class User {
     type: 'timestamp',
     nullable: true
   })
-  birthdate?: Date;
+  birthdate?: Date | null;
 }

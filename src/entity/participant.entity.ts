@@ -15,7 +15,7 @@ export default class Participant {
 
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
   @JoinColumn({ name: 'user_id' })
-  userId?: User;
+  userId?: User | null;
 
   @Column({
     name: 'display_name',
