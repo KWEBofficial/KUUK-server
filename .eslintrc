@@ -16,5 +16,11 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": { "prettier/prettier": "error" },
-  "ignorePatterns": ["node_modules/", "dist/"]
+  "ignorePatterns": ["node_modules/", "dist/"],
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    }
+  ]
 }
