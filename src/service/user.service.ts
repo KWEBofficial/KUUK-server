@@ -1,6 +1,6 @@
 import User from '../entity/user.entity';
 import CreateUserInput from '../type/user/create.input';
-import { UserRepository } from '../repository/db.repository';
+import UserRepository from '../repository/user.repository';
 import { InternalServerError } from '../util/customErrors';
 
 export default class UserService {
