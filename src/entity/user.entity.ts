@@ -1,40 +1,46 @@
 import {
   Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
-
-// 예시 entity입니다. 필요에 따라 수정하거나 삭제하셔도 됩니다.
 
 @Entity()
 export default class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  firstName!: string;
-
   @Column({
+    name: 'username',
     type: 'varchar',
     length: 100,
     nullable: false,
-    default: '김',
-    comment: '사용자의 성',
+    default: 'user',
+    comment: '사용자 아이디',
   })
-  lastName!: string;
+  username!: string;
 
-  @Column({ nullable: true })
-  age?: number;
+  @Column({
+    name: 'display_name',
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+    default: 'nickname',
+    comment: '표시 이름',
+  })
+  displayName!: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
+  @Column({
+    name: 'password',
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+    comment: '비밀번호'
+  })
+  password!: string;
 
-  @UpdateDateColumn({ type: 'timestamp', nullable: true })
-  updatedAt?: Date;
-
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deletedAt?: Date;
+  @Column({
+    name: 'birthdate',
+    type: 'timestamp',
+  })
+  birthdate!: Date;
 }
