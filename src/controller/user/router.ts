@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { createUser, getUserById, getUsersByUsername, getUsersByBirthdate } from './controller';
+import {
+  createUser,
+  getUserById,
+  getUsersByUsername,
+  getUsersByBirthdate,
+} from './controller';
 
 const userRouter = Router();
 
@@ -9,4 +14,4 @@ userRouter.get('/', getUsersByUsername);
 userRouter.get('/', getUsersByBirthdate);
 userRouter.post('/', createUser); // body를 사용하여 user 정보를 저장하는 api ex) POST http://localhost:3000/user | body: { "firstName": "John", "lastName": "Doe", "age": 23 }
 
-export {userRouter};
+export default userRouter;
