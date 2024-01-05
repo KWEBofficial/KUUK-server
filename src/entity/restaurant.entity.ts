@@ -1,8 +1,11 @@
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import Category from './category.entity'
 
 @Entity()
 export default class Restaurant {
@@ -27,14 +30,9 @@ export default class Restaurant {
   })
   location!: string;
 
-  @Column({
-    name: 'category',
-    type: 'varchar',
-    length: 100,
-    nullable: false,
-    comment: '식당 카테고리'
-  })
-  category!: string;
+  @ManyToMany(() => Category)
+  @JoinTable({ name: 'category_ids' })
+  categoryIds!: Category[];
 
   @Column({
     name: 'img_dir',
