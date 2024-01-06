@@ -31,8 +31,8 @@ export default class Restaurant {
   location!: string;
 
   @ManyToMany(() => Category)
-  @JoinTable({ name: 'category_ids' })
-  categoryIds!: Category[];
+  @JoinTable({ name: 'category_list' })
+  categories!: Category[];
 
   @Column({
     name: 'img_dir',
