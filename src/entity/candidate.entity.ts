@@ -12,11 +12,9 @@ export default class Candidate {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Poll, (poll) => poll.id)
-  @JoinColumn({ name: 'poll_id' })
-  pollId!: Poll;
+  @ManyToOne(() => Poll, (poll) => poll.candidates)
+  poll!: Poll;
 
-  @ManyToOne(() => Restaurant, (restaurant) => restaurant.id)
-  @JoinColumn({ name: 'restaurant_id' })
-  restaurantId!: Restaurant;
+  @ManyToOne(() => Restaurant)
+  restaurant!: Restaurant;
 }
