@@ -1,8 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export default class User {
@@ -32,9 +28,9 @@ export default class User {
   @Column({
     name: 'password',
     type: 'varchar',
-    length: 100,
+    length: 512, //hashedpassword 저장을 위해
     nullable: false,
-    comment: '비밀번호'
+    comment: '비밀번호',
   })
   password!: string;
 
