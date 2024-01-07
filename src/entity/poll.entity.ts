@@ -4,10 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import User from './user.entity';
+import Participant from './participant.entity';
+import Candidate from './candidate.entity';
 
 @Entity()
 export default class Poll {
@@ -25,7 +28,6 @@ export default class Poll {
   pollName!: string;
 
   @ManyToOne(() => User, (user) => user.id)
-  @JoinColumn({ name: 'created_by' })
   createdBy!: User;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
@@ -33,6 +35,12 @@ export default class Poll {
 
   @UpdateDateColumn({ name: 'ended_at', type: 'timestamp', nullable: true })
   endedAt?: Date | null;
+
+  @OneToMany(() => Candidate, (candidate) => candidate.poll)
+  candidates!: Candidate[];
+
+  @OneToMany(() => Participant, (participant) => participant.poll)
+  participants!: Participant[];
 
   @Column({
     name: 'url',

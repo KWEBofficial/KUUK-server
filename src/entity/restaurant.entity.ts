@@ -3,9 +3,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import Category from './category.entity'
+import Menu from './menu.entity'
 
 @Entity()
 export default class Restaurant {
@@ -28,7 +30,10 @@ export default class Restaurant {
     nullable: false,
     comment: '식당 위치'
   })
-  location!: string;
+  location!: string; // Table?
+
+  @OneToMany(() => Menu, (menu) => menu.restaurant)
+  menus!: Menu[]
 
   @ManyToMany(() => Category)
   @JoinTable({ name: 'category_list' })

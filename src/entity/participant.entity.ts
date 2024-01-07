@@ -13,9 +13,8 @@ export default class Participant {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => User, (user) => user.id, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  userId?: User | null;
+  @ManyToOne(() => User, { nullable: true })
+  user?: User | null;
 
   @Column({
     name: 'display_name',
@@ -27,7 +26,6 @@ export default class Participant {
   })
   displayName!: string;
 
-  @ManyToOne(() => Poll, (poll) => poll.id)
-  @JoinColumn({ name: 'poll_id' })
-  pollId!: Poll;
+  @ManyToOne(() => Poll, (poll) => poll.participants)
+  poll!: Poll;
 }

@@ -12,9 +12,8 @@ export default class Menu {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Restaurant, (restaurant) => restaurant.id)
-  @JoinColumn({ name: 'restaurant_id' })
-  restaurantId!: Restaurant;
+  @ManyToOne(() => Restaurant, (restaurant) => restaurant.menus)
+  restaurant!: Restaurant;
 
   @Column({
     name: 'menu_name',
