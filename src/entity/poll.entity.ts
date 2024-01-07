@@ -23,12 +23,12 @@ export default class Poll {
     length: 100,
     nullable: false,
     default: 'poll',
-    comment: '투표 이름'
+    comment: '투표 이름',
   })
   pollName!: string;
 
   @ManyToOne(() => User, (user) => user.id)
-  createdBy!: User;
+  createdUser!: User;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
@@ -45,7 +45,7 @@ export default class Poll {
   @Column({
     name: 'url',
     nullable: false,
-    comment: "투표 URL"
+    comment: '투표 URL',
   })
   url!: string;
 }
