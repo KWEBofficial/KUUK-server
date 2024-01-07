@@ -12,9 +12,9 @@ export default class UserService {
     }
   }
 
-  static async getUsersByUsername(username: string): Promise<User[]> {
+  static async getUsersByUsername(username: string): Promise<User | null> {
     try {
-      return await UserRepository.find({ where: { username } });
+      return await UserRepository.findOne({ where: { username } }); //User 단일 반환
     } catch (error) {
       throw new InternalServerError('유저 정보를 불러오는데 실패했습니다.');
     }

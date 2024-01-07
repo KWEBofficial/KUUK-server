@@ -20,13 +20,13 @@ export const loginUser: RequestHandler = async (req, res, next) => {
     // 없다면 UnauthorizedError (?)
     if (!user) throw new UnauthorizedError('해당하는 유저가 없습니다.');
     // 해싱 이용 비밀번호 확인
-    const isValid = await verifyPassword(password, user[0].password);
+    const isValid = await verifyPassword(password, user.password);
     if (!isValid) throw new UnauthorizedError('비밀번호가 일치하지 않습니다.');
     // 모두 통과했다면 user 정보를 session에 저장!
     req.session.user = {
-      id: user[0].id,
-      username: user[0].username,
-      displayName: user[0].displayName,
+      id: user.id,
+      username: user.username,
+      displayName: user.displayName,
     }; // 정보 더 추가해야 하는가?
     // 메인 페이지로 redirection 추가 필요
     res.json(user);
