@@ -38,21 +38,31 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 // POST /user/join
 export const createUser: RequestHandler = async (req, res, next) => {
   try {
-    const { username, displayName, password, birthdate } =
-      req.body as CreateUserInput;
-    const createUserInput: CreateUserInput = {
-      username,
-      displayName,
-      password,
-      birthdate,
-    };
+    const { username, displayName, password, confirmPassword, birthdate } =
+      req.body as CreateUserInput & { confirmPassword: string }; //비밀번호 확인
+    //아이디 16자 이하, 비밀번호 일치, 닉네임 길이 32자 이하
+    if (!username || username.length > 16)
+      throw new BadRequestError('아이디가 적절하지 않습니다.');
+    if (!password) throw new BadRequestError('비밀번호가 비어 있습니다.');
+    if (password !== confirmPassword)
+      throw new BadRequestError('비밀번호가 서로 일치 하지 않습니다.');
+    if (!displayName || displayName.length > 32)
+      throw new BadRequestError('닉네임이 적절하지 않습니다.');
     // 중복 검사 (?)
     const existingUser = await UserService.getUsersByUsername(username);
     if (existingUser) throw new BadRequestError('이미 존재하는 아이디입니다.');
+    //비밀번호 해싱
+    const hashedPassword = await generatePassword(password);
     // 유저 정보 저장 (password 암호화 해줄 것인지?)
+    const createUserInput: CreateUserInput = {
+      username,
+      displayName,
+      password: hashedPassword,
+      birthdate,
+    };
     const user = await UserService.saveUser(createUserInput);
     // 로그인 페이지로 redirection 추가 필요
-    res.status(201).json(user.id);
+    res.status(201).json(user);
   } catch (error) {
     next(error);
   }
