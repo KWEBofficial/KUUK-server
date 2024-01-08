@@ -1,9 +1,4 @@
-import {
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Participant from './participant.entity';
 import Candidate from './candidate.entity';
 
@@ -13,7 +8,7 @@ export default class Vote {
   id!: number;
 
   @ManyToOne(() => Participant)
-  votedBy!: Participant;
+  votedUser!: Participant;
 
   @ManyToOne(() => Candidate)
   candidate!: Candidate;
