@@ -2,6 +2,8 @@ import { RequestHandler } from 'express';
 import PollService from '../../service/poll.service';
 import CreatePollInput from '../../type/poll/create.input';
 import { BadRequestError } from '../../util/customErrors';
+import Restaurant from '../../entity/restaurant.entity';
+import FilterInput from '../../type/filter/create.input';
 
 export const getPollById: RequestHandler = async (req, res, next) => {
   try {
@@ -18,7 +20,7 @@ export const getPollById: RequestHandler = async (req, res, next) => {
 
 export const getPollsByPollName: RequestHandler = async (req, res, next) => {
   try {
-    const pollName = String(req.query.pollName); 
+    const pollName = String(req.query.pollName);
 
     const polls = await PollService.getPollsByPollName(pollName);
 
@@ -28,14 +30,87 @@ export const getPollsByPollName: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const createPoll: RequestHandler = async (req, res, next) => {
+// GET /poll
+// 위치, 카테고리 설정 창 불러오기
+export const getSettingform: RequestHandler = async (req, res, next) => {
   try {
-    const { pollName, createdBy, url, createdAt, endedAt } = req.body as CreatePollInput;
-    const createPollInput: CreatePollInput = { pollName, createdBy, url, createdAt, endedAt };
+    const locations = await PollService.getAllLocations();
+    const categories = await PollService.getAllCategories();
 
+    res.json({ locations, categories });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET /poll/restaurant/:location&category
+export const createFilteredRestaurants: RequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    let { locations, categories }: FilterInput = req.query; //string[], nullable
+    console.log('Received locations:', locations);
+    console.log('Received categories:', categories);
+
+    // locations나 categories가 비었으면 전체 locations/categories 넣어주기
+    if (!locations) {
+      locations = await PollService.getAllLocations();
+    }
+    if (!categories) {
+      categories = await PollService.getAllCategories();
+    }
+
+    const restaurants = await PollService.getRestaurantsByFiltering(
+      locations,
+      categories,
+    );
+
+    res.status(201).json(restaurants);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /poll/restaurant
+export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
+  try {
+    const {
+      pollName,
+      createdBy,
+      url,
+      createdAt,
+      endedAt,
+      selectedRestaurants,
+    } = req.body as CreatePollInput & { selectedRestaurants: Restaurant[] };
+
+    // 선택한 레스토랑이 없다면
+    if (!selectedRestaurants) {
+      throw new BadRequestError('식당 후보를 하나 이상 선택해주세요.');
+    }
+    // Poll 이름을 설정 안했다면
+    if (!pollName) {
+      throw new BadRequestError('투표방 이름을 설정해주세요.');
+    }
+    // 투표방 생성
+    const createPollInput: CreatePollInput = {
+      pollName,
+      createdBy,
+      url,
+      createdAt,
+      endedAt,
+    };
     const poll = await PollService.createPoll(createPollInput);
 
-    res.status(201).json(poll.id);
+    // restaurant를 candidates 테이블에 저장
+    const candidate = await PollService.createCandidate(
+      poll,
+      selectedRestaurants[0], //여기가 문제, restaurants를 리스트로 받아오는데 어떻게 저장?
+    );
+
+    res.status(201).json(poll);
+    // poll/${pollId}로 리다이렉트
   } catch (error) {
     next(error);
   }
