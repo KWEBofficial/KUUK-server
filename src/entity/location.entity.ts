@@ -13,5 +13,5 @@ export default class Location {
     default: '정후',
     comment: '식당 위치',
   })
-  Location!: string;
+  locationName!: string;
 }
