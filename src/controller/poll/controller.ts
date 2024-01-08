@@ -18,7 +18,7 @@ export const getPollById: RequestHandler = async (req, res, next) => {
 
 export const getPollsByPollName: RequestHandler = async (req, res, next) => {
   try {
-    const pollName = String(req.query.pollName); 
+    const pollName = String(req.query.pollName);
 
     const polls = await PollService.getPollsByPollName(pollName);
 
@@ -30,8 +30,15 @@ export const getPollsByPollName: RequestHandler = async (req, res, next) => {
 
 export const createPoll: RequestHandler = async (req, res, next) => {
   try {
-    const { pollName, createdBy, url, createdAt, endedAt } = req.body as CreatePollInput;
-    const createPollInput: CreatePollInput = { pollName, createdBy, url, createdAt, endedAt };
+    const { pollName, createdUser, url, createdAt, endedAt } =
+      req.body as CreatePollInput;
+    const createPollInput: CreatePollInput = {
+      pollName,
+      createdUser,
+      url,
+      createdAt,
+      endedAt,
+    };
 
     const poll = await PollService.createPoll(createPollInput);
 
