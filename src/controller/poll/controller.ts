@@ -5,6 +5,7 @@ import VoteService from '../../service/vote.service';
 import CreatePollInput from '../../type/poll/create.input';
 import { BadRequestError } from '../../util/customErrors';
 import Restaurant from '../../entity/restaurant.entity';
+import FilterInput from '../../type/filter/create.input';
 
 export const getPollById: RequestHandler = async (req, res, next) => {
   try {
@@ -31,21 +32,79 @@ export const getPollsByPollName: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const createPoll: RequestHandler = async (req, res, next) => {
+export const getSettingform: RequestHandler = async (req, res, next) => {
   try {
-    const { pollName, createdUser, url, createdAt, endedAt } =
-      req.body as CreatePollInput;
+    const locations = await CandidateService.getAllLocations();
+    const categories = await CandidateService.getAllCategories();
+
+    res.json({ locations, categories });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET /poll/restaurant/:location&category
+export const createFilteredRestaurants: RequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    let { locations, categories }: FilterInput = req.query; //string[], string, nullable
+
+    // locations나 categories가 비었으면 전체 locations/categories 넣어주기
+    if (!locations) {
+      locations = await CandidateService.getAllLocations();
+    }
+    if (!categories) {
+      categories = await CandidateService.getAllCategories();
+    }
+
+    const restaurants = await CandidateService.getRestaurantsByFiltering(
+      locations,
+      categories,
+    );
+
+    res.status(201).json(restaurants);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /poll/restaurant
+export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
+  try {
+    const { pollName, createdUser, createdAt, selectedRestaurants } =
+      req.body as CreatePollInput & { selectedRestaurants: Restaurant[] };
+
+    // 선택한 레스토랑이 없다면
+    if (!selectedRestaurants) {
+      throw new BadRequestError('식당 후보를 하나 이상 선택해주세요.');
+    }
+    // Poll 이름을 설정 안했다면
+    if (!pollName) {
+      throw new BadRequestError('투표방 이름을 설정해주세요.');
+    }
+
+    // url 생성해야 함
+    const createdUrl = 'aaaa';
+
+    // 투표방 생성
     const createPollInput: CreatePollInput = {
       pollName,
       createdUser,
-      url,
+      url: createdUrl,
       createdAt,
-      endedAt,
     };
-
     const poll = await PollService.createPoll(createPollInput);
 
-    res.status(201).json(poll.id);
+    // restaurant를 candidates 테이블에 저장
+    const candidate = await CandidateService.createCandidates(
+      poll,
+      selectedRestaurants,
+    );
+
+    res.status(201).json(candidate);
   } catch (error) {
     next(error);
   }
