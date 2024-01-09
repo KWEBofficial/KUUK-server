@@ -58,16 +58,20 @@ export default class PollService {
     }
   }
 
-  static async createCandidate(
+  static async createCandidates(
     poll: Poll,
-    selectedRestaurants: Restaurant,
-  ): Promise<Candidate> {
+    selectedRestaurants: Restaurant[],
+  ): Promise<Candidate[]> {
     try {
-      const candidateEntity = await CandidateRepository.create({
-        poll: poll,
-        restaurants: selectedRestaurants,
+      // restaurants list를 객체 하나씩 넣으면서 candidates에 삽입
+
+      const candidateEntities = selectedRestaurants.map((restaurant) => {
+        return CandidateRepository.create({
+          poll: poll,
+          restaurant: restaurant,
+        });
       });
-      return await CandidateRepository.save(candidateEntity);
+      return await CandidateRepository.save(candidateEntities);
     } catch (error) {
       throw new InternalServerError('투표 정보를 저장하는데 실패했습니다.');
     }
