@@ -2,12 +2,15 @@ import {
   Column,
   Entity,
   JoinTable,
+  JoinColumn,
+  OneToOne,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import Category from './category.entity'
-import Menu from './menu.entity'
+import Category from './category.entity';
+import Location from './location.entity';
+import Menu from './menu.entity';
 
 @Entity()
 export default class Restaurant {
@@ -19,21 +22,16 @@ export default class Restaurant {
     type: 'varchar',
     length: 100,
     nullable: false,
-    comment: '식당 이름'
+    comment: '식당 이름',
   })
   restaurantName!: string;
 
-  @Column({
-    name: 'location',
-    type: 'varchar',
-    length: 100,
-    nullable: false,
-    comment: '식당 위치'
-  })
-  location!: string; // Table?
+  @OneToOne(() => Location)
+  @JoinColumn()
+  location!: Location;
 
   @OneToMany(() => Menu, (menu) => menu.restaurant)
-  menus!: Menu[]
+  menus!: Menu[];
 
   @ManyToMany(() => Category)
   @JoinTable({ name: 'category_list' })
@@ -42,7 +40,7 @@ export default class Restaurant {
   @Column({
     name: 'img_dir',
     nullable: true,
-    comment: '이미지 디렉토리'
+    comment: '이미지 디렉토리',
   })
   imgDir?: string; // 여긴 null 추가 시 Object로 인식되어 mysql로 처리 못함
 
