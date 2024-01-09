@@ -50,7 +50,7 @@ export const createFilteredRestaurants: RequestHandler = async (
   next,
 ) => {
   try {
-    let { locations, categories }: FilterInput = req.query; //string[], nullable
+    let { locations, categories }: FilterInput = req.query; //string[], string, nullable
     console.log('Received locations:', locations);
     console.log('Received categories:', categories);
 
@@ -79,7 +79,7 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     const {
       pollName,
       createdBy,
-      url,
+      // url,
       createdAt,
       endedAt,
       selectedRestaurants,
@@ -93,24 +93,61 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     if (!pollName) {
       throw new BadRequestError('투표방 이름을 설정해주세요.');
     }
+
+    // url 생성해야 함(나중에 생성하기)
+    const createdUrl = 'aaaa';
+
     // 투표방 생성
     const createPollInput: CreatePollInput = {
       pollName,
       createdBy,
-      url,
+      url: createdUrl,
       createdAt,
       endedAt,
     };
     const poll = await PollService.createPoll(createPollInput);
 
     // restaurant를 candidates 테이블에 저장
-    const candidate = await PollService.createCandidate(
+    const candidate = await PollService.createCandidates(
       poll,
-      selectedRestaurants[0], //여기가 문제, restaurants를 리스트로 받아오는데 어떻게 저장?
+      selectedRestaurants,
     );
 
-    res.status(201).json(poll);
+    res.status(201).json(candidate);
     // poll/${pollId}로 리다이렉트
+    // poll redirect
+    // {
+    //   "pollName": "머먹지",
+    //   "createdBy":
+    //   {
+    //     "username": "id",
+    //     "display_name": "배고파",
+    //     "password": "2001-05-23"
+    //   },
+    //   "createdAt": "2024-01-09",
+    //   "endedAt": "2024-01-20",
+    //   "selectedRestaurants" :
+    //   [
+    //     {
+    //       "id": 2,
+    //       "restaurantName": "동우설렁탕",
+    //       "imgDir": "ddd",
+    //       "description": "맛있다"
+    //     },
+    //     {
+    //       "id": 1,
+    //       "restaurantName": "만두냠냠",
+    //       "imgDir": "abcd",
+    //       "description": "만두굿"
+    //     },
+    //     {
+    //       "id": 3,
+    //       "restaurantName": "맥도날드",
+    //       "imgDir": "asdf",
+    //       "description": "냠냠"
+    //     }
+    //   ]
+    // }
   } catch (error) {
     next(error);
   }
