@@ -16,7 +16,7 @@ export const loginUser: RequestHandler = async (req, res, next) => {
     if (!username || !password)
       throw new BadRequestError('아이디와 비밀번호를 모두 입력해주세요');
     // username에 해당하는 user 정보 가져오기
-    const user = await UserService.getUsersByUsername(username);
+    const user = await UserService.getUserByUsername(username);
     // 없다면 UnauthorizedError (?)
     if (!user) throw new UnauthorizedError('해당하는 유저가 없습니다.');
     // 해싱 이용 비밀번호 확인
@@ -49,7 +49,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
     if (!displayName || displayName.length > 32)
       throw new BadRequestError('닉네임이 적절하지 않습니다.');
     // 중복 검사 (?)
-    const existingUser = await UserService.getUsersByUsername(username);
+    const existingUser = await UserService.getUserByUsername(username);
     if (existingUser) throw new BadRequestError('이미 존재하는 아이디입니다.');
     //비밀번호 해싱
     const hashedPassword = await generatePassword(password);

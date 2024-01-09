@@ -28,4 +28,12 @@ export default class PollService {
       throw new InternalServerError('투표 정보를 저장하는데 실패했습니다.');
     }
   }
+
+  static async getPollByUrl(url: string): Promise<Poll> {
+    try {
+      return await PollRepository.findOneOrFail({ where: { url } });
+    } catch (error) {
+      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+    }
+  }
 }
