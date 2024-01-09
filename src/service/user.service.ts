@@ -12,7 +12,7 @@ export default class UserService {
     }
   }
 
-  static async getUsersByUsername(username: string): Promise<User | null> {
+  static async getUserByUsername(username: string): Promise<User | null> {
     try {
       return await UserRepository.findOne({ where: { username } }); //User 단일 반환
     } catch (error) {
