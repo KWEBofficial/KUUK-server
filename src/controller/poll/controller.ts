@@ -33,11 +33,11 @@ export const getPollsByPollName: RequestHandler = async (req, res, next) => {
 
 export const createPoll: RequestHandler = async (req, res, next) => {
   try {
-    const { pollName, createdBy, url, createdAt, endedAt } =
+    const { pollName, createdUser, url, createdAt, endedAt } =
       req.body as CreatePollInput;
     const createPollInput: CreatePollInput = {
       pollName,
-      createdBy,
+      createdUser,
       url,
       createdAt,
       endedAt,
