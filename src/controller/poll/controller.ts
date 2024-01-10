@@ -4,7 +4,7 @@ import CandidateService from '../../service/candidate.service';
 import VoteService from '../../service/vote.service';
 import RestaurantService from '../../service/restaurant.service';
 import CreatePollInput from '../../type/poll/create.input';
-import { BadRequestError } from '../../util/customErrors';
+import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 import Restaurant from '../../entity/restaurant.entity';
 import FilterInput from '../../type/filter/create.input';
 
@@ -115,23 +115,24 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
 export const getPollForm: RequestHandler = async (req, res, next) => {
   try {
     const pollId = Number(req.params.pollId);
-    console.log(pollId)
+    console.log(pollId);
     const poll = await PollService.getPollById(pollId);
     const candidates = await CandidateService.getCandidatesByPollId(pollId);
-    const restaurants = await RestaurantService.getRestaurantsByCandidates(candidates);
+    const restaurants =
+      await RestaurantService.getRestaurantsByCandidates(candidates);
     const votesList = await VoteService.getVotesListByCandidates(candidates);
     // 얘네를 적당히 json 형식으로 반환...
     const pollFormData = {
       poll,
       candidates,
       restaurants,
-      votesList
-    }
+      votesList,
+    };
     res.status(201).json(pollFormData);
   } catch (error) {
     next(error);
   }
-}
+};
 
 // GET /poll/result/:pollId || pollId라는 poll에서 득표수가 가장 많은 restaurant들의 객체 배열을 res.json으로 넣어줍니다.
 export const getPollResultById: RequestHandler = async (req, res, next) => {
@@ -163,6 +164,20 @@ export const getPollResultById: RequestHandler = async (req, res, next) => {
     });
 
     res.status(201).json(restaurants);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET /poll/history
+export const getPollsByUserId: RequestHandler = async (req, res, next) => {
+  try {
+    const { user } = req.session;
+    if (!user) throw new UnauthorizedError('로그인되어 있지 않습니다.');
+
+    const polls = await PollService.getPollsByUserId(user.id);
+
+    res.status(201).json(polls);
   } catch (error) {
     next(error);
   }
