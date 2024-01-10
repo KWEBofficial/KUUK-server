@@ -36,4 +36,14 @@ export default class PollService {
       throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
     }
   }
+
+  static async getPollsByUserId(userId: number): Promise<Poll[]> {
+    try {
+      return await PollRepository.find({
+        where: { createdUser: { id: userId } },
+      });
+    } catch (error) {
+      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+    }
+  }
 }
