@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import PollService from '../../service/poll.service';
 import CandidateService from '../../service/candidate.service';
 import VoteService from '../../service/vote.service';
+import RestaurantService from '../../service/restaurant.service';
 import CreatePollInput from '../../type/poll/create.input';
 import { BadRequestError } from '../../util/customErrors';
 import Restaurant from '../../entity/restaurant.entity';
@@ -109,6 +110,28 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// GET /poll/:pollId
+export const getPollForm: RequestHandler = async (req, res, next) => {
+  try {
+    const pollId = Number(req.params.pollId);
+    console.log(pollId)
+    const poll = await PollService.getPollById(pollId);
+    const candidates = await CandidateService.getCandidatesByPollId(pollId);
+    const restaurants = await RestaurantService.getRestaurantsByCandidates(candidates);
+    const votesList = await VoteService.getVotesListByCandidates(candidates);
+    // 얘네를 적당히 json 형식으로 반환...
+    const pollFormData = {
+      poll,
+      candidates,
+      restaurants,
+      votesList
+    }
+    res.status(201).json(pollFormData);
+  } catch (error) {
+    next(error);
+  }
+}
 
 // GET /poll/result/:pollId || pollId라는 poll에서 득표수가 가장 많은 restaurant들의 객체 배열을 res.json으로 넣어줍니다.
 export const getPollResultById: RequestHandler = async (req, res, next) => {
