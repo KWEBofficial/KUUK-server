@@ -7,6 +7,8 @@ import CreatePollInput from '../../type/poll/create.input';
 import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 import Restaurant from '../../entity/restaurant.entity';
 import FilterInput from '../../type/filter/create.input';
+import CreateVoteInput from '../../type/vote/create.input';
+import PollRepository from '../../repository/poll.repository';
 
 export const getPollById: RequestHandler = async (req, res, next) => {
   try {
@@ -178,6 +180,52 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
     const polls = await PollService.getPollsByUserId(user.id);
 
     res.status(201).json(polls);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /poll/:pollId
+export const postVoteInPoll: RequestHandler = async (req, res, next) => {
+  try {
+    //req.body로 부터 votedUser, votedCandidate 가져오기
+    const { votedUser, votedCandidate } = req.body;
+
+    const createVoteInput: CreateVoteInput = {
+      votedUser: votedUser,
+      candidate: votedCandidate,
+    };
+    const vote = await VoteService.saveVote(createVoteInput);
+    return res.json(vote);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /poll/end/:pollId
+export const endPoll: RequestHandler = async (req, res, next) => {
+  try {
+    const currentUser = req.session.user;
+    const pollId = Number(req.params.pollId);
+    const poll = await PollService.getPollById(pollId);
+
+    // 현재 세션의 유저와 poll을 만든 유저가 다르거나, 세션에 유저 정보가 없다면 error
+    if ((currentUser?.id !== poll?.createdUser.id) || !currentUser) {
+      return res.status(403).json({ error: '투표를 만든 사용자만 투표를 종료할 수 있습니다.' });
+    } else {
+      // 같다면 poll table의 endedAt을 update
+      const currentTimestamp = new Date();
+      await PollRepository.update(
+        { id: pollId },
+        { endedAt: currentTimestamp }
+      );
+
+      return res.status(201).json(currentTimestamp);
+      // 투표 결과 페이지로 redirect 필요합니다. -> 프론트에서 하면 되려나???
+      // return res.redirect(`/poll/result/${pollId}`);
+    }
+
+
   } catch (error) {
     next(error);
   }

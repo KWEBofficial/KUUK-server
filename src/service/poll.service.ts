@@ -6,7 +6,7 @@ import { InternalServerError } from '../util/customErrors';
 export default class PollService {
   static async getPollById(id: number): Promise<Poll | null> {
     try {
-      return await PollRepository.findOne({ where: { id } });
+      return await PollRepository.findOne({ where: { id }, relations: ['createdUser'] });
     } catch (error) {
       throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
     }
