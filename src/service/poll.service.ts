@@ -11,15 +11,9 @@ export default class PollService {
         relations: ['createdUser'],
       });
     } catch (error) {
-      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
-    }
-  }
-
-  static async getPollsByPollName(pollName: string): Promise<Poll[]> {
-    try {
-      return await PollRepository.find({ where: { pollName } });
-    } catch (error) {
-      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '아이디로 투표 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 
@@ -36,7 +30,9 @@ export default class PollService {
     try {
       return await PollRepository.findOneOrFail({ where: { url } });
     } catch (error) {
-      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        'URL로 투표 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 
@@ -46,7 +42,9 @@ export default class PollService {
         where: { createdUser: { id: userId } },
       });
     } catch (error) {
-      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '사용자 아이디로 투표 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 

@@ -5,7 +5,7 @@ import { InternalServerError } from '../util/customErrors';
 
 export default class ParticipantService {
   static async getParticipantByDisplayNameandPollId(
-    poll_id: number, //변수명...
+    poll_id: number,
     displayName: string,
   ): Promise<Participant | null> {
     try {
@@ -16,8 +16,8 @@ export default class ParticipantService {
       throw new InternalServerError('참가자 정보를 찾을 수 없습니다.');
     }
   }
+
   static async saveParticipant(
-    //participant 저장
     createParticipantInput: CreateParticipantInput,
   ): Promise<Participant> {
     try {

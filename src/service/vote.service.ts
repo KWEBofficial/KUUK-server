@@ -24,11 +24,15 @@ export default class VoteService {
       });
       return votes;
     } catch (error) {
-      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '후보를 이용해 투표 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 
-  static async getVotesListByCandidates(candidates: Candidate[]): Promise<Vote[][]> {
+  static async getVotesListByCandidates(
+    candidates: Candidate[],
+  ): Promise<Vote[][]> {
     try {
       const votesPromises = candidates.map(async (candidate) => {
         const vote = await this.getVotesByCandidate(candidate);
@@ -36,20 +40,18 @@ export default class VoteService {
       });
       return Promise.all(votesPromises);
     } catch (error) {
-      throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '투표 리스트정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 
-  //vote 저장용 service
-  static async saveVote(
-    //vote table에 저장
-    createVoteInput: CreateVoteInput,
-  ): Promise<Vote> {
+  static async saveVote(createVoteInput: CreateVoteInput): Promise<Vote> {
     try {
       const participantEntity = await VoteRepository.create(createVoteInput);
       return await VoteRepository.save(participantEntity);
     } catch (error) {
-      throw new InternalServerError('게스트 정보를 저장하는데 실패했습니다.');
+      throw new InternalServerError('투표 정보를 저장하는데 실패했습니다.');
     }
   }
 }
