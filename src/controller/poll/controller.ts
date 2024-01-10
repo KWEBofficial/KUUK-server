@@ -3,6 +3,8 @@ import PollService from '../../service/poll.service';
 import CandidateService from '../../service/candidate.service';
 import VoteService from '../../service/vote.service';
 import RestaurantService from '../../service/restaurant.service';
+import ParticipantService from '../../service/participant.service';
+import CreateParticipantInput from '../../type/participant/create.input';
 import CreatePollInput from '../../type/poll/create.input';
 import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 import Restaurant from '../../entity/restaurant.entity';
@@ -90,7 +92,12 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     }
 
     // url 생성해야 함
-    const createdUrl = 'aaaa';
+    const protocol = 'http';
+    const domain = 'what2eat.com';
+    const path = '/invite';
+    const param = '/' + PollService.generateRandomString(5);
+    const createdUrl = `${protocol}://${domain}${path}${param}`;
+    console.log(createdUrl);
 
     // 투표방 생성
     const createPollInput: CreatePollInput = {
@@ -106,6 +113,17 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
       poll,
       selectedRestaurants,
     );
+
+    const createParticipantInput: CreateParticipantInput = {
+      user: createdUser,
+      displayName: createdUser.displayName,
+      poll,
+    };
+
+    console.log(createdUser.displayName);
+
+    // participant에 user 저장
+    await ParticipantService.saveParticipant(createParticipantInput);
 
     res.status(201).json(candidate);
   } catch (error) {
@@ -210,22 +228,21 @@ export const endPoll: RequestHandler = async (req, res, next) => {
     const poll = await PollService.getPollById(pollId);
 
     // 현재 세션의 유저와 poll을 만든 유저가 다르거나, 세션에 유저 정보가 없다면 error
-    if ((currentUser?.id !== poll?.createdUser.id) || !currentUser) {
-      return res.status(403).json({ error: '투표를 만든 사용자만 투표를 종료할 수 있습니다.' });
+    if (currentUser?.id !== poll?.createdUser.id || !currentUser) {
+      return res
+        .status(403)
+        .json({ error: '투표를 만든 사용자만 투표를 종료할 수 있습니다.' });
     } else {
       // 같다면 poll table의 endedAt을 update
       const currentTimestamp = new Date();
       await PollRepository.update(
         { id: pollId },
-        { endedAt: currentTimestamp }
+        { endedAt: currentTimestamp },
       );
 
       return res.status(201).json(currentTimestamp);
-      // 투표 결과 페이지로 redirect 필요합니다. -> 프론트에서 하면 되려나???
       // return res.redirect(`/poll/result/${pollId}`);
     }
-
-
   } catch (error) {
     next(error);
   }

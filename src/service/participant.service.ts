@@ -26,7 +26,7 @@ export default class ParticipantService {
       );
       return await ParticipantRepository.save(participantEntity);
     } catch (error) {
-      throw new InternalServerError('게스트 정보를 저장하는데 실패했습니다.');
+      throw new InternalServerError('참가자 정보를 저장하는데 실패했습니다.');
     }
   }
 }

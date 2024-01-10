@@ -6,7 +6,10 @@ import { InternalServerError } from '../util/customErrors';
 export default class PollService {
   static async getPollById(id: number): Promise<Poll | null> {
     try {
-      return await PollRepository.findOne({ where: { id }, relations: ['createdUser'] });
+      return await PollRepository.findOne({
+        where: { id },
+        relations: ['createdUser'],
+      });
     } catch (error) {
       throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
     }
@@ -22,8 +25,8 @@ export default class PollService {
 
   static async createPoll(createPollInput: CreatePollInput): Promise<Poll> {
     try {
-      const userEntity = await PollRepository.create(createPollInput);
-      return await PollRepository.save(userEntity);
+      const pollEntity = await PollRepository.create(createPollInput);
+      return await PollRepository.save(pollEntity);
     } catch (error) {
       throw new InternalServerError('투표 정보를 저장하는데 실패했습니다.');
     }
@@ -45,5 +48,17 @@ export default class PollService {
     } catch (error) {
       throw new InternalServerError('투표 정보를 불러오는데 실패했습니다.');
     }
+  }
+
+  static generateRandomString(length: number): string {
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length),
+      );
+    }
+    return result;
   }
 }
