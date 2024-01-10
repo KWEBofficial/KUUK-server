@@ -71,10 +71,11 @@ export const createUser: RequestHandler = async (req, res, next) => {
 // POST /user/logout
 export const logoutUser: RequestHandler = async (req, res, next) => {
   try {
-    // session destroy 해주기
     req.session.destroy((err) => {
       if (err) throw err;
-      else return; // 메인페이지로 redirect 추가 필요
+      else {
+        res.status(200).json({ message: 'Logout Success' });
+      }
     });
   } catch (error) {
     next(error);
