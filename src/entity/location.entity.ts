@@ -6,9 +6,6 @@ export default class Location {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Restaurant, (restaurant) => restaurant.location)
-  restaurant!: Restaurant;
-
   @Column({
     name: 'location_name',
     type: 'varchar',

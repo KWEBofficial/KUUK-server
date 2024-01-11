@@ -25,7 +25,7 @@ export default class Restaurant {
   })
   restaurantName!: string;
 
-  @OneToMany(() => Location, (location) => location.restaurant)
+  @ManyToOne(() => Location, (location) => location.id)
   location!: Location;
 
   @OneToMany(() => Menu, (menu) => menu.restaurant)
