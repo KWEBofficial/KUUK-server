@@ -50,13 +50,13 @@ export const createFilteredRestaurants: RequestHandler = async (
     next(error);
   }
 };
-
 // POST /poll/restaurant
 export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
   try {
-    const { pollName, createdUser, createdAt, selectedRestaurants } =
+    const { pollName, createdAt, selectedRestaurants } =
       req.body as CreatePollInput & { selectedRestaurants: Restaurant[] };
-
+    const userSession = req.session.user;
+    console.log(userSession);
     if (!selectedRestaurants) {
       throw new BadRequestError('식당 후보를 하나 이상 선택해주세요.');
     }
@@ -74,7 +74,7 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     // 투표방 생성
     const createPollInput: CreatePollInput = {
       pollName,
-      createdUser,
+      createdUser: userSession ? userSession.id : null,
       url: createdUrl,
       createdAt,
     };
@@ -87,8 +87,8 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     );
 
     const createParticipantInput: CreateParticipantInput = {
-      user: createdUser,
-      displayName: createdUser.displayName,
+      user: userSession ? userSession.id : null,
+      displayName: userSession ? userSession.displayName : null,
       poll,
     };
 
