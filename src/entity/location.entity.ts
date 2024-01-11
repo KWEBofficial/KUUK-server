@@ -1,9 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import Restaurant from './restaurant.entity';
 
 @Entity()
 export default class Location {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @ManyToOne(() => Restaurant, (restaurant) => restaurant.location)
+  restaurant!: Restaurant;
 
   @Column({
     name: 'location_name',

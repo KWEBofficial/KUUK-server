@@ -2,8 +2,7 @@ import {
   Column,
   Entity,
   JoinTable,
-  JoinColumn,
-  OneToOne,
+  ManyToOne,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -26,8 +25,7 @@ export default class Restaurant {
   })
   restaurantName!: string;
 
-  @OneToOne(() => Location)
-  @JoinColumn()
+  @OneToMany(() => Location, (location) => location.restaurant)
   location!: Location;
 
   @OneToMany(() => Menu, (menu) => menu.restaurant)
