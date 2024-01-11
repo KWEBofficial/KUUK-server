@@ -13,7 +13,7 @@ export default class CandidateService {
     try {
       return await CandidateRepository.find({
         where: { poll: { id: pollId } },
-        relations: ['poll', 'restaurant'], // 이거 넣어야 poll과 restaurant에 접근 가능
+        relations: ['poll', 'restaurant'],
       });
     } catch (error) {
       throw new InternalServerError('후보 정보를 불러오는데 실패했습니다.');
@@ -25,7 +25,7 @@ export default class CandidateService {
     categories: string[] | string,
   ): Promise<Restaurant[]> {
     try {
-      // locations와 categories가 단일 문자열이라면 배열 형태로 변환하여 find 수행
+      // locations와 categories가 단일 문자열이라면 배열 형태로 변환
       const locationsArray = Array.isArray(locations) ? locations : [locations];
       const categoriesArray = Array.isArray(categories)
         ? categories
@@ -42,7 +42,6 @@ export default class CandidateService {
     }
   }
 
-  // 선택된 레스토랑 객체 하나씩 candidate 테이블에 저장
   static async createCandidates(
     poll: Poll,
     selectedRestaurants: Restaurant[],
@@ -60,7 +59,6 @@ export default class CandidateService {
     }
   }
 
-  // location 테이블에서 전체 locationName을 추출하여 반환
   static async getAllLocations(): Promise<string[]> {
     try {
       const locations = await LocationRepository.find({
@@ -72,7 +70,6 @@ export default class CandidateService {
     }
   }
 
-  // category 테이블에서 전체 categoryName을 추출하여 반환
   static async getAllCategories(): Promise<string[]> {
     try {
       const categories = await CategoryRepository.find({

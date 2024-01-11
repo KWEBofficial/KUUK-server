@@ -8,15 +8,19 @@ export default class UserService {
     try {
       return await UserRepository.findOne({ where: { id } });
     } catch (error) {
-      throw new InternalServerError('유저 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '아이디로 유저 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 
   static async getUserByUsername(username: string): Promise<User | null> {
     try {
-      return await UserRepository.findOne({ where: { username } }); //User 단일 반환
+      return await UserRepository.findOne({ where: { username } });
     } catch (error) {
-      throw new InternalServerError('유저 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '사용자 아이디로 유저 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 
@@ -24,7 +28,9 @@ export default class UserService {
     try {
       return await UserRepository.find({ where: { birthdate } });
     } catch (error) {
-      throw new InternalServerError('유저 정보를 불러오는데 실패했습니다.');
+      throw new InternalServerError(
+        '생일로 유저 정보를 불러오는데 실패했습니다.',
+      );
     }
   }
 

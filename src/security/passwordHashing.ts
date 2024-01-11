@@ -1,5 +1,5 @@
 const util = require('util');
-const cryptoN = require('crypto'); //crypto가 이미 선언되어 있음
+const cryptoN = require('crypto');
 
 const pbkdf2 = util.promisify(cryptoN.pbkdf2);
 const randomBytes = util.promisify(cryptoN.randomBytes);
