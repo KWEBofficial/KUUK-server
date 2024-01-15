@@ -89,7 +89,10 @@ export const logoutUser: RequestHandler = async (req, res, next) => {
     req.session.destroy((err) => {
       if (err) throw err;
       else {
-        res.status(200).json({ message: 'Logout Success' });
+        res
+          .status(200)
+          .clearCookie('connect.sid', { path: '/' })
+          .json({ message: 'Logout Success' });
       }
     });
   } catch (error) {
