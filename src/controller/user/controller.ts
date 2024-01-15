@@ -28,7 +28,7 @@ export const loginUser: RequestHandler = async (req, res, next) => {
     };
 
     // 메인 페이지로 redirection
-    res.json(user);
+    return res.status(200).json(user);
   } catch (error) {
     next(error);
   }
@@ -65,6 +65,19 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
     // 로그인 페이지로 redirection 추가 필요
     res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//GET /user/status
+export const getStatus: RequestHandler = async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      res.status(200).json({ username: req.session.user.username });
+    } else {
+      res.status(204).send('로그인 상태가 아닙니다.');
+    }
   } catch (error) {
     next(error);
   }
