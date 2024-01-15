@@ -6,6 +6,7 @@ import RestaurantService from '../../service/restaurant.service';
 import ParticipantService from '../../service/participant.service';
 import CreateParticipantInput from '../../type/participant/create.input';
 import CreatePollInput from '../../type/poll/create.input';
+import ResultRestaurant from '../../type/restaurant/result';
 import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 import Restaurant from '../../entity/restaurant.entity';
 import FilterInput from '../../type/filter/create.input';
@@ -183,18 +184,24 @@ export const getPollResultById: RequestHandler = async (req, res, next) => {
       (resolvedVoteCounts) => Math.max(...resolvedVoteCounts),
     );
 
-    // 최다 득표 restaurants(공동 1위 가능)
-    let restaurants: Restaurant[] = [];
-
     const resolvedVoteCounts = await Promise.all(voteCounts); // Promise 풀어주기
+
+    // 최다 득표 restaurants(공동 1위 가능)
+    let resultRestaurants: ResultRestaurant[] = [];
 
     resolvedVoteCounts.forEach((voteCount, index) => {
       if (voteCount === maxVoteCount) {
-        restaurants.push(candidates[index].restaurant);
+        const curRestaurant = candidates[index].restaurant;
+        resultRestaurants.push({
+          id: curRestaurant.id,
+          restaurantName: curRestaurant.restaurantName,
+          imgDir: curRestaurant.imgDir,
+          description: curRestaurant.description,
+        });
       }
     });
 
-    res.status(201).json(restaurants);
+    res.status(201).json({ maxVoteCount, resultRestaurants });
   } catch (error) {
     next(error);
   }
