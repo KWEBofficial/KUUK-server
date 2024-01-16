@@ -215,7 +215,7 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
 
     const polls = await PollService.getPollsByUserId(user.id);
 
-    res.status(201).json(polls);
+    res.json(polls);
   } catch (error) {
     next(error);
   }
