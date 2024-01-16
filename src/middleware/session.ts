@@ -12,8 +12,11 @@ declare module 'express-session' {
 const sessionMiddleware = session({
   secret: SESSION_SECRET,
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false },
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    maxAge: 1000 * 60 * 60 * 24, //세션 기한 24시간
+  },
 });
 
 export default sessionMiddleware;

@@ -11,11 +11,9 @@ const PORT = Number(process.env.PORT) || 3000;
 
 const app = express();
 
-app.use(sessionMiddleware);
-
 AppDataSource.initialize().then(() => console.log('DATABASE is connected!'));
-
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: false }));
+app.use(sessionMiddleware);
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(router);

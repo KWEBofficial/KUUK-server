@@ -28,7 +28,7 @@ export const loginUser: RequestHandler = async (req, res, next) => {
     };
 
     // 메인 페이지로 redirection
-    res.json(user);
+    return res.status(200).json(user);
   } catch (error) {
     next(error);
   }
@@ -70,13 +70,29 @@ export const createUser: RequestHandler = async (req, res, next) => {
   }
 };
 
+//GET /user/status
+export const getStatus: RequestHandler = async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      res.status(200).json({ username: req.session.user.username });
+    } else {
+      res.status(204).send('로그인 상태가 아닙니다.');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 // POST /user/logout
 export const logoutUser: RequestHandler = async (req, res, next) => {
   try {
     req.session.destroy((err) => {
       if (err) throw err;
       else {
-        res.status(200).json({ message: 'Logout Success' });
+        res
+          .status(200)
+          .clearCookie('connect.sid', { path: '/' })
+          .json({ message: 'Logout Success' });
       }
     });
   } catch (error) {
