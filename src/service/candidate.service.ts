@@ -21,14 +21,14 @@ export default class CandidateService {
   }
 
   static async getRestaurantsByFiltering(
-    locations: number[],
-    categories: number[],
+    locations: string[],
+    categories: string[],
   ): Promise<Restaurant[]> {
     try {
       return await RestaurantRepository.find({
         where: {
-          location: { id: In(locations) },
-          categories: { id: In(categories) },
+          location: { locationName: In(locations) },
+          categories: { categoryName: In(categories) },
         },
         relations: ['location', 'categories'],
       });

@@ -34,19 +34,19 @@ export const createFilteredRestaurants: RequestHandler = async (
   try {
     let { locations, categories }: FilterInput = req.query; //string, null
 
-    let locationsArray: number[] = [];
-    let categoriesArray: number[] = [];
+    let locationsArray: string[] = [];
+    let categoriesArray: string[] = [];
 
     if (!locations) {
-      locationsArray = [0, 1, 2, 3, 4, 5, 6];
+      locationsArray = await CandidateService.getAllLocations();
     } else {
-      locationsArray = locations.split(',').map(Number);
+      locationsArray = locations.split(',');
     }
 
     if (!categories) {
-      categoriesArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      categoriesArray = await CandidateService.getAllCategories();
     } else {
-      categoriesArray = categories.split(',').map(Number);
+      categoriesArray = categories.split(',');
     }
 
     const restaurants = await CandidateService.getRestaurantsByFiltering(
