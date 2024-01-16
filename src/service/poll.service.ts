@@ -28,7 +28,7 @@ export default class PollService {
 
   static async getPollByUrl(url: string): Promise<Poll> {
     try {
-      return await PollRepository.findOneOrFail({ where: { url } });
+      return await PollRepository.findOneOrFail({ where: { url }, relations: ['createdUser'] });
     } catch (error) {
       throw new InternalServerError(
         'URL로 투표 정보를 불러오는데 실패했습니다.',
