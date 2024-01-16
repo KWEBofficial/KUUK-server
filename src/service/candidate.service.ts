@@ -21,20 +21,14 @@ export default class CandidateService {
   }
 
   static async getRestaurantsByFiltering(
-    locations: string[] | string,
-    categories: string[] | string,
+    locations: number[],
+    categories: number[],
   ): Promise<Restaurant[]> {
     try {
-      // locations와 categories가 단일 문자열이라면 배열 형태로 변환
-      const locationsArray = Array.isArray(locations) ? locations : [locations];
-      const categoriesArray = Array.isArray(categories)
-        ? categories
-        : [categories];
-
       return await RestaurantRepository.find({
         where: {
-          location: { locationName: In(locationsArray) },
-          categories: { categoryName: In(categoriesArray) },
+          location: { id: In(locations) },
+          categories: { id: In(categories) },
         },
       });
     } catch (error) {
