@@ -4,10 +4,10 @@ import CreateParticipantInput from '../../type/participant/create.input';
 import ParticipantService from '../../service/participant.service';
 import PollService from '../../service/poll.service';
 
-//GET /guest/login?url=some-poll-url
+//GET /guest/login/some-poll-url
 export const showGuestLoginPage: RequestHandler = async (req, res, next) => {
   try {
-    const url = req.query.url;
+    const url = req.params.url;
 
     if (!url) throw new BadRequestError('URL이 존재하지 않습니다.');
 
