@@ -39,7 +39,7 @@ export default class PollService {
   static async getPollsByUserId(userId: number): Promise<Poll[]> {
     try {
       return await PollRepository.find({
-        where: { createdUser: { id: userId } },
+        where: { createdUser: { id: userId } }, relations: ['candidates', 'candidates.restaurant']
       });
     } catch (error) {
       throw new InternalServerError(
