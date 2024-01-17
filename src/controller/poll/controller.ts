@@ -232,10 +232,12 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
       const maxVoteCount = await Promise.all(voteCounts).then(
         (resolvedVoteCounts) => Math.max(...resolvedVoteCounts),
       );
+      if (maxVoteCount <= 0) return {poll, resultImgDir: ""};
 
       const resolvedVoteCounts = await Promise.all(voteCounts); // Promise 풀어주기
 
       const index = resolvedVoteCounts.indexOf(maxVoteCount);
+      if (index < 0) return {poll, resultImgDir: ""};
 
       const resultImgDir = poll.candidates[index].restaurant.imgDir;
 
