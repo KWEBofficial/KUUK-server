@@ -32,21 +32,29 @@ export const createFilteredRestaurants: RequestHandler = async (
   next,
 ) => {
   try {
-    let { locations, categories }: FilterInput = req.query; //string[], string, nullable
+    let { locations, categories }: FilterInput = req.query; //string, null
+
+    let locationsArray: string[] = [];
+    let categoriesArray: string[] = [];
 
     if (!locations) {
-      locations = await CandidateService.getAllLocations();
+      locationsArray = await CandidateService.getAllLocations();
+    } else {
+      locationsArray = locations.split(',');
     }
+
     if (!categories) {
-      categories = await CandidateService.getAllCategories();
+      categoriesArray = await CandidateService.getAllCategories();
+    } else {
+      categoriesArray = categories.split(',');
     }
 
     const restaurants = await CandidateService.getRestaurantsByFiltering(
-      locations,
-      categories,
+      locationsArray,
+      categoriesArray,
     );
 
-    res.status(201).json(restaurants);
+    res.status(200).json(restaurants);
   } catch (error) {
     next(error);
   }
