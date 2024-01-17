@@ -30,7 +30,7 @@ export default class CandidateService {
           location: { locationName: In(locations) },
           categories: { categoryName: In(categories) },
         },
-        relations: ['location', 'categories'],
+        relations: ['location', 'categories', 'menus'],
       });
     } catch (error) {
       throw new InternalServerError('레스토랑 정보를 불러오는데 실패했습니다.');
