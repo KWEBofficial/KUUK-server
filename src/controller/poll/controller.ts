@@ -74,11 +74,7 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     }
 
     // url 생성
-    const protocol = 'http';
-    const domain = 'what2eat.com';
-    const path = '/invite';
-    const param = '/' + PollService.generateRandomString(5);
-    const createdUrl = `${protocol}://${domain}${path}${param}`;
+    const createdUrl = PollService.generateRandomString(5);
 
     // 투표방 생성
     const createPollInput: CreatePollInput = {
