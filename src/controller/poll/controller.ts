@@ -54,7 +54,9 @@ export const createFilteredRestaurants: RequestHandler = async (
       categoriesArray,
     );
 
-    res.status(200).json(restaurants);
+    const sortedRestaurants = restaurants.sort((a, b) => a.id - b.id);
+
+    res.status(200).json(sortedRestaurants);
   } catch (error) {
     next(error);
   }
