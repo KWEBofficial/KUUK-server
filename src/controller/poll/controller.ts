@@ -65,7 +65,7 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     const { pollName, createdAt, selectedRestaurants } =
       req.body as CreatePollInput & { selectedRestaurants: Restaurant[] };
     const userSession = req.session.user;
-    console.log(userSession);
+
     if (!selectedRestaurants) {
       throw new BadRequestError('식당 후보를 하나 이상 선택해주세요.');
     }
@@ -104,7 +104,7 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     // participant 저장
     await ParticipantService.saveParticipant(createParticipantInput);
 
-    res.status(201).json(candidate);
+    res.status(201).json(String(poll.id));
   } catch (error) {
     next(error);
   }
@@ -225,7 +225,10 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
 
     const response = polls.map(async (poll) => {
       const voteCounts = poll.candidates
-        .map(async (candidate) => await VoteService.getVotesByCandidateId(candidate.id)) // 각 후보에게 투표한 vote의 배열로
+        .map(
+          async (candidate) =>
+            await VoteService.getVotesByCandidateId(candidate.id),
+        ) // 각 후보에게 투표한 vote의 배열로
         .map((votes) => votes.then((resolvedVotes) => resolvedVotes.length)); // Promise를 풀고 해당 배열의 length로
 
       // 최다 득표수
@@ -239,7 +242,7 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
 
       const resultImgDir = poll.candidates[index].restaurant.imgDir;
 
-      return {poll, resultImgDir};
+      return { poll, resultImgDir };
     });
 
     const resolvedResponse = await Promise.all(response);
