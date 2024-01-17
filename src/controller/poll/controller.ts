@@ -223,7 +223,28 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
 
     const polls = await PollService.getPollsByUserId(user.id);
 
-    res.status(201).json(polls);
+    const response = polls.map(async (poll) => {
+      const voteCounts = poll.candidates
+        .map(async (candidate) => await VoteService.getVotesByCandidateId(candidate.id)) // 각 후보에게 투표한 vote의 배열로
+        .map((votes) => votes.then((resolvedVotes) => resolvedVotes.length)); // Promise를 풀고 해당 배열의 length로
+
+      // 최다 득표수
+      const maxVoteCount = await Promise.all(voteCounts).then(
+        (resolvedVoteCounts) => Math.max(...resolvedVoteCounts),
+      );
+
+      const resolvedVoteCounts = await Promise.all(voteCounts); // Promise 풀어주기
+
+      const index = resolvedVoteCounts.indexOf(maxVoteCount);
+
+      const resultImgDir = poll.candidates[index].restaurant.imgDir;
+
+      return {poll, resultImgDir};
+    });
+
+    const resolvedResponse = await Promise.all(response);
+
+    res.json(resolvedResponse);
   } catch (error) {
     next(error);
   }
