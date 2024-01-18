@@ -8,7 +8,7 @@ export default class RestaurantService {
     id: number,
   ): Promise<Restaurant | null> {
     try {
-      return await RestaurantRepository.findOne({ where: { id } });
+      return await RestaurantRepository.findOne({ where: { id }, relations: ['location', 'categories', 'menus'] });
     } catch (error) {
       throw new InternalServerError(
         '아이디로 식당 정보를 불러오는데 실패했습니다.',
