@@ -273,3 +273,16 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deletePollsByPollIds: RequestHandler = async (req, res, next) => {
+  try {
+    const {pollIds} = req.body;
+    pollIds.map((pollId: number) => {
+      const poll = PollService.deletePollByPollId(pollId);
+    })
+
+    res.status(200).json('Delete success');
+  } catch (error) {
+    next(error);
+  }
+}

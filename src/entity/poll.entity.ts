@@ -48,4 +48,10 @@ export default class Poll {
     comment: '투표 URL',
   })
   url!: string;
+
+  @Column({
+    nullable: false,
+    default: false,
+  })
+  isDeleted!: boolean;
 }

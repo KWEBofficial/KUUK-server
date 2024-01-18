@@ -9,6 +9,7 @@ import {
   getVoteCount,
   postVoteInPoll,
   endPoll,
+  deletePollsByPollIds,
 } from './controller';
 
 const pollRouter = Router();
@@ -24,5 +25,7 @@ pollRouter.post('/end/:pollId(\\d+)', endPoll);
 
 pollRouter.get('/result/:pollId(\\d+)', getPollResultById);
 pollRouter.get('/history', getPollsByUserId);
+
+pollRouter.post('/delHistory', deletePollsByPollIds);
 
 export default pollRouter;
