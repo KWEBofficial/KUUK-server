@@ -76,11 +76,7 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
     }
 
     // url 생성
-    const protocol = 'http';
-    const domain = 'what2eat.com';
-    const path = '/invite';
-    const param = '/' + PollService.generateRandomString(5);
-    const createdUrl = `${protocol}://${domain}${path}${param}`;
+    const createdUrl = PollService.generateRandomString(5);
 
     // 투표방 생성
     const createPollInput: CreatePollInput = {
@@ -237,10 +233,12 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
       const maxVoteCount = await Promise.all(voteCounts).then(
         (resolvedVoteCounts) => Math.max(...resolvedVoteCounts),
       );
+      if (maxVoteCount <= 0) return {poll, resultImgDir: ""};
 
       const resolvedVoteCounts = await Promise.all(voteCounts); // Promise 풀어주기
 
       const index = resolvedVoteCounts.indexOf(maxVoteCount);
+      if (index < 0) return {poll, resultImgDir: ""};
 
       const resultImgDir = poll.candidates[index].restaurant.imgDir;
 
