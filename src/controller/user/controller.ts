@@ -74,9 +74,10 @@ export const createUser: RequestHandler = async (req, res, next) => {
 export const getStatus: RequestHandler = async (req, res, next) => {
   try {
     if (req.session.user) {
-      res.status(200).json({ username: req.session.user.username, displayName: req.session.user.displayName });
-    } else if (req.session.guest) {
-      res.status(200).json({ displayName: req.session.guest.displayName });
+      res.status(200).json({
+        username: req.session.user.username,
+        displayName: req.session.user.displayName,
+      });
     } else {
       res.status(204).send('로그인 상태가 아닙니다.');
     }
