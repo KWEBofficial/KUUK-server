@@ -48,6 +48,19 @@ export default class PollService {
     }
   }
 
+  static async deletePollByPollId(pollId: number) {
+    try {
+      PollRepository.query(
+        'UPDATE poll SET is_deleted = true WHERE id = ?',
+        [pollId]
+      );
+    } catch (error) {
+      throw new InternalServerError(
+        '투표 아이디로 투표 정보를 삭제하는데 실패했습니다.',
+      );
+    }
+  }
+
   static generateRandomString(length: number): string {
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
