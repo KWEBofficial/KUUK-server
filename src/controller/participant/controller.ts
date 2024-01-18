@@ -56,3 +56,16 @@ export const loginGuest: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// GET /guest/status
+export const getStatus: RequestHandler = async (req, res, next) => {
+  try {
+    if (req.session.guest) {
+      res.status(200).json({ displayName: req.session.guest.displayName });
+    } else {
+      res.status(204).send('로그인 상태가 아닙니다.');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
