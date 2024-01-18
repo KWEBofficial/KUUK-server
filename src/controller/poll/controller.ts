@@ -113,19 +113,20 @@ export const getPollForm: RequestHandler = async (req, res, next) => {
   try {
     const pollId = Number(req.params.pollId);
     const poll = await PollService.getPollById(pollId);
-    const candidates = await CandidateService.getCandidatesByPollId(pollId);
+    const candidatesWithPoll = await CandidateService.getCandidatesByPollId(pollId);
     const restaurants =
-      await RestaurantService.getRestaurantsByCandidates(candidates);
-    const votesList = await VoteService.getVotesListByCandidates(candidates);
+      await RestaurantService.getRestaurantsByCandidates(candidatesWithPoll);
+    const votesList = await VoteService.getVotesListByCandidates(candidatesWithPoll);
 
+    // poll 정보는 candidate에 들어가지 않아도 되므로
+    const candidates = candidatesWithPoll.map(({ poll, ...rest }) => rest);
     const pollFormData = {
       poll,
       candidates,
       restaurants,
-      votesList,
     };
 
-    res.status(201).json(pollFormData);
+    res.status(200).json(pollFormData);
   } catch (error) {
     next(error);
   }
@@ -134,10 +135,19 @@ export const getPollForm: RequestHandler = async (req, res, next) => {
 // POST /poll/:pollId
 export const postVoteInPoll: RequestHandler = async (req, res, next) => {
   try {
-    const { votedUser, votedCandidate } = req.body;
+    const { votedCandidate } = req.body;
+    const currentParticipant = (req.session.user) ? req.session.user : req.session.guest;
+    if (!currentParticipant) throw new Error('로그인 정보가 없습니다.');
+
+    const votedParticipant = await ParticipantService.getParticipantByDisplayNameandPollId(
+      Number(req.params.pollId),
+      currentParticipant.displayName,
+    );
+
+    if (!votedParticipant) throw new Error('참여자 정보가 없습니다.');
 
     const createVoteInput: CreateVoteInput = {
-      votedUser: votedUser,
+      votedUser: votedParticipant,
       candidate: votedCandidate,
     };
     const vote = await VoteService.saveVote(createVoteInput);
@@ -157,8 +167,8 @@ export const endPoll: RequestHandler = async (req, res, next) => {
 
     if (currentUser?.id !== poll?.createdUser.id || !currentUser) {
       return res
-        .status(403)
-        .json({ error: '투표를 만든 사용자만 투표를 종료할 수 있습니다.' });
+        .status(201)
+        .json({ res: false });
     } else {
       // poll table의 endedAt을 update
       const currentTimestamp = new Date();
@@ -167,9 +177,20 @@ export const endPoll: RequestHandler = async (req, res, next) => {
         { endedAt: currentTimestamp },
       );
 
-      return res.status(201).json(currentTimestamp);
+      return res.status(201).json({ res: true });
       // return res.redirect(`/poll/result/${pollId}`);
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET /poll/:pollId/:candidateId
+export const getVoteCount: RequestHandler = async (req, res, next) => {
+  try {
+    const candidateId = Number(req.params.candidateId);
+    const voteCounts = (await VoteService.getVotesByCandidateId(candidateId)).length ? (await VoteService.getVotesByCandidateId(candidateId)).length : 0;
+    return res.json(voteCounts);
   } catch (error) {
     next(error);
   }
