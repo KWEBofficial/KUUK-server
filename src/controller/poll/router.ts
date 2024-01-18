@@ -6,6 +6,7 @@ import {
   getPollResultById,
   getPollForm,
   getPollsByUserId,
+  getVoteCount,
   postVoteInPoll,
   endPoll,
 } from './controller';
@@ -17,6 +18,7 @@ pollRouter.get('/restaurant', createFilteredRestaurants);
 pollRouter.post('/restaurant', creatPollAndCandidate);
 
 pollRouter.get('/:pollId(\\d+)', getPollForm);
+pollRouter.get('/:pollId(\\d+)/:candidateId(\\d+)', getVoteCount);
 pollRouter.post('/:pollId(\\d+)', postVoteInPoll);
 pollRouter.post('/end/:pollId(\\d+)', endPoll);
 
