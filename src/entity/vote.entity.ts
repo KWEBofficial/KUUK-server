@@ -1,6 +1,6 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import Participant from './participant.entity';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Candidate from './candidate.entity';
+import Participant from './participant.entity';
 
 @Entity()
 export default class Vote {

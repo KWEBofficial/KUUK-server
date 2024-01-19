@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import {
-  getSettingform,
-  createFilteredRestaurants,
   creatPollAndCandidate,
-  getPollResultById,
+  createFilteredRestaurants,
+  deletePollsByPollIds,
+  endPoll,
   getPollForm,
+  getPollResultById,
   getPollsByUserId,
+  getSettingform,
   getVoteCount,
   postVoteInPoll,
-  endPoll,
-  deletePollsByPollIds,
 } from './controller';
 
 const pollRouter = Router();

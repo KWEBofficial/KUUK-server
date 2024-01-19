@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import userRouter from './user/router';
-import pollRouter from './poll/router';
 import guestRouter from './participant/router';
+import pollRouter from './poll/router';
+import userRouter from './user/router';
 
 const router = Router();
 

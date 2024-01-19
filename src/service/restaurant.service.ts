@@ -1,14 +1,17 @@
-import Restaurant from '../entity/restaurant.entity';
 import Candidate from '../entity/candidate.entity';
-import { InternalServerError } from '../util/customErrors';
+import Restaurant from '../entity/restaurant.entity';
 import RestaurantRepository from '../repository/restaurant.repository';
+import { InternalServerError } from '../util/customErrors';
 
 export default class RestaurantService {
   static async getRestaurantByRestaurantId(
     id: number,
   ): Promise<Restaurant | null> {
     try {
-      return await RestaurantRepository.findOne({ where: { id }, relations: ['location', 'categories', 'menus'] });
+      return await RestaurantRepository.findOne({
+        where: { id },
+        relations: ['location', 'categories', 'menus'],
+      });
     } catch (error) {
       throw new InternalServerError(
         '아이디로 식당 정보를 불러오는데 실패했습니다.',

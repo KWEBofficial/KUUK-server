@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Restaurant from './restaurant.entity';
 
 @Entity()
@@ -21,7 +15,7 @@ export default class Menu {
     length: 100,
     nullable: false,
     default: '돈까스',
-    comment: '메뉴 이름'
+    comment: '메뉴 이름',
   })
   menuName!: string;
 
@@ -30,7 +24,7 @@ export default class Menu {
     type: 'int',
     nullable: false,
     default: 0,
-    comment: '가격'
+    comment: '가격',
   })
-  price!: number
+  price!: number;
 }
