@@ -38,11 +38,11 @@ mysql/mariadb 기반 KUUK서비스의 백엔드 서버 프로젝트입니다.
 
 ## 데이터베이스
 
-기본 DBMS는 mysql/mariadb입니다. mysql/mariadb를 설치하고 사용할 데이터베이스의 이름으로 데이터베이스를 생성하세요. 다른 DBMS를 사용하려면 **src/config** 디렉토리의 **dataSource.ts** 파일을 수정할 수 있습니다.
+기본 DBMS는 mysql/mariadb입니다. mysql/mariadb를 설치하고 사용할 데이터베이스의 이름으로 데이터베이스를 생성하세요. 다른 DBMS를 사용하려면 **`src/config`** 디렉토리의 **`dataSource.ts`** 파일을 수정할 수 있습니다.
 
 ## 환경 변수
 
-개발 모드인 경우 프로젝트의 루트 디렉토리에 **.env.dev** 파일을 생성하고 다음과 같은 변수를 추가하세요.
+개발 모드인 경우 프로젝트의 루트 디렉토리에 **`.env.dev`** 파일을 생성하고 다음과 같은 변수를 추가하세요.
 
 ```
 CLIENT_URL=http://localhost:4000
@@ -56,7 +56,7 @@ DB_PASSWORD=pwd # password of the database
 DB_NAME=example # name of the database, which you created in the previous step
 ```
 
-프로덕션 모드인 경우 프로젝트의 루트 디렉토리에 **.env.prod** 파일을 생성하고 위의 구성 변수를 적절한 값으로 추가하세요.
+프로덕션 모드인 경우 프로젝트의 루트 디렉토리에 **`.env.prod`** 파일을 생성하고 위의 구성 변수를 적절한 값으로 추가하세요.
 
 ## 실행
 
