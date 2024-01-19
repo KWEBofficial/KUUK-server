@@ -1,17 +1,17 @@
 import { RequestHandler } from 'express';
-import PollService from '../../service/poll.service';
+import Restaurant from '../../entity/restaurant.entity';
+import PollRepository from '../../repository/poll.repository';
 import CandidateService from '../../service/candidate.service';
-import VoteService from '../../service/vote.service';
-import RestaurantService from '../../service/restaurant.service';
 import ParticipantService from '../../service/participant.service';
+import PollService from '../../service/poll.service';
+import RestaurantService from '../../service/restaurant.service';
+import VoteService from '../../service/vote.service';
+import FilterInput from '../../type/filter/create.input';
 import CreateParticipantInput from '../../type/participant/create.input';
 import CreatePollInput from '../../type/poll/create.input';
 import ResultRestaurant from '../../type/restaurant/result';
-import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
-import Restaurant from '../../entity/restaurant.entity';
-import FilterInput from '../../type/filter/create.input';
 import CreateVoteInput from '../../type/vote/create.input';
-import PollRepository from '../../repository/poll.repository';
+import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 
 // GET /poll
 export const getSettingform: RequestHandler = async (req, res, next) => {
@@ -25,14 +25,14 @@ export const getSettingform: RequestHandler = async (req, res, next) => {
   }
 };
 
-// GET /poll/restaurant/:location=정후&category=돈까스
+// GET /poll/restaurant?location=정후,고대사거리&category=치킨,돈까스
 export const createFilteredRestaurants: RequestHandler = async (
   req,
   res,
   next,
 ) => {
   try {
-    let { locations, categories }: FilterInput = req.query; //string, null
+    let { locations, categories }: FilterInput = req.query;
 
     let locationsArray: string[] = [];
     let categoriesArray: string[] = [];
@@ -61,6 +61,7 @@ export const createFilteredRestaurants: RequestHandler = async (
     next(error);
   }
 };
+
 // POST /poll/restaurant
 export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
   try {
@@ -75,7 +76,6 @@ export const creatPollAndCandidate: RequestHandler = async (req, res, next) => {
       throw new BadRequestError('투표방 이름을 설정해주세요.');
     }
 
-    // url 생성
     const createdUrl = PollService.generateRandomString(5);
 
     // 투표방 생성
@@ -113,12 +113,13 @@ export const getPollForm: RequestHandler = async (req, res, next) => {
   try {
     const pollId = Number(req.params.pollId);
     const poll = await PollService.getPollById(pollId);
-    const candidatesWithPoll = await CandidateService.getCandidatesByPollId(pollId);
+    const candidatesWithPoll =
+      await CandidateService.getCandidatesByPollId(pollId);
     const restaurants =
       await RestaurantService.getRestaurantsByCandidates(candidatesWithPoll);
-    const votesList = await VoteService.getVotesListByCandidates(candidatesWithPoll);
+    const votesList =
+      await VoteService.getVotesListByCandidates(candidatesWithPoll);
 
-    // poll 정보는 candidate에 들어가지 않아도 되므로
     const candidates = candidatesWithPoll.map(({ poll, ...rest }) => rest);
     const pollFormData = {
       poll,
@@ -136,13 +137,16 @@ export const getPollForm: RequestHandler = async (req, res, next) => {
 export const postVoteInPoll: RequestHandler = async (req, res, next) => {
   try {
     const { votedCandidate } = req.body;
-    const currentParticipant = (req.session.user) ? req.session.user : req.session.guest;
+    const currentParticipant = req.session.user
+      ? req.session.user
+      : req.session.guest;
     if (!currentParticipant) throw new Error('로그인 정보가 없습니다.');
 
-    const votedParticipant = await ParticipantService.getParticipantByDisplayNameandPollId(
-      Number(req.params.pollId),
-      currentParticipant.displayName,
-    );
+    const votedParticipant =
+      await ParticipantService.getParticipantByDisplayNameandPollId(
+        Number(req.params.pollId),
+        currentParticipant.displayName,
+      );
 
     if (!votedParticipant) throw new Error('참여자 정보가 없습니다.');
 
@@ -166,11 +170,8 @@ export const endPoll: RequestHandler = async (req, res, next) => {
     const poll = await PollService.getPollById(pollId);
 
     if (currentUser?.id !== poll?.createdUser.id || !currentUser) {
-      return res
-        .status(201)
-        .json({ res: false });
+      return res.status(201).json({ res: false });
     } else {
-      // poll table의 endedAt을 update
       const currentTimestamp = new Date();
       await PollRepository.update(
         { id: pollId },
@@ -178,7 +179,6 @@ export const endPoll: RequestHandler = async (req, res, next) => {
       );
 
       return res.status(201).json({ res: true });
-      // return res.redirect(`/poll/result/${pollId}`);
     }
   } catch (error) {
     next(error);
@@ -189,7 +189,10 @@ export const endPoll: RequestHandler = async (req, res, next) => {
 export const getVoteCount: RequestHandler = async (req, res, next) => {
   try {
     const candidateId = Number(req.params.candidateId);
-    const voteCounts = (await VoteService.getVotesByCandidateId(candidateId)).length ? (await VoteService.getVotesByCandidateId(candidateId)).length : 0;
+    const voteCounts = (await VoteService.getVotesByCandidateId(candidateId))
+      .length
+      ? (await VoteService.getVotesByCandidateId(candidateId)).length
+      : 0;
     return res.json(voteCounts);
   } catch (error) {
     next(error);
@@ -203,15 +206,14 @@ export const getPollResultById: RequestHandler = async (req, res, next) => {
 
     const candidates = await CandidateService.getCandidatesByPollId(pollId);
     const voteCounts = candidates
-      .map((candidate) => VoteService.getVotesByCandidateId(candidate.id)) // 각 후보에게 투표한 vote의 배열로
-      .map((votes) => votes.then((resolvedVotes) => resolvedVotes.length)); // Promise를 풀고 해당 배열의 length로
+      .map((candidate) => VoteService.getVotesByCandidateId(candidate.id))
+      .map((votes) => votes.then((resolvedVotes) => resolvedVotes.length));
 
-    // 최다 득표수
     const maxVoteCount = await Promise.all(voteCounts).then(
       (resolvedVoteCounts) => Math.max(...resolvedVoteCounts),
     );
 
-    const resolvedVoteCounts = await Promise.all(voteCounts); // Promise 풀어주기
+    const resolvedVoteCounts = await Promise.all(voteCounts);
 
     // 최다 득표 restaurants(공동 1위 가능)
     let resultRestaurants: ResultRestaurant[] = [];
@@ -247,19 +249,19 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
         .map(
           async (candidate) =>
             await VoteService.getVotesByCandidateId(candidate.id),
-        ) // 각 후보에게 투표한 vote의 배열로
-        .map((votes) => votes.then((resolvedVotes) => resolvedVotes.length)); // Promise를 풀고 해당 배열의 length로
+        )
+        .map((votes) => votes.then((resolvedVotes) => resolvedVotes.length));
 
       // 최다 득표수
       const maxVoteCount = await Promise.all(voteCounts).then(
         (resolvedVoteCounts) => Math.max(...resolvedVoteCounts),
       );
-      if (maxVoteCount <= 0) return {poll, resultImgDir: ""};
+      if (maxVoteCount <= 0) return { poll, resultImgDir: '' };
 
-      const resolvedVoteCounts = await Promise.all(voteCounts); // Promise 풀어주기
+      const resolvedVoteCounts = await Promise.all(voteCounts);
 
       const index = resolvedVoteCounts.indexOf(maxVoteCount);
-      if (index < 0) return {poll, resultImgDir: ""};
+      if (index < 0) return { poll, resultImgDir: '' };
 
       const resultImgDir = poll.candidates[index].restaurant.imgDir;
 
@@ -276,13 +278,13 @@ export const getPollsByUserId: RequestHandler = async (req, res, next) => {
 
 export const deletePollsByPollIds: RequestHandler = async (req, res, next) => {
   try {
-    const {pollIds} = req.body;
+    const { pollIds } = req.body;
     pollIds.map((pollId: number) => {
       const poll = PollService.deletePollByPollId(pollId);
-    })
+    });
 
     res.status(200).json('Delete success');
   } catch (error) {
     next(error);
   }
-}
+};
