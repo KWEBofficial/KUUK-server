@@ -1,43 +1,101 @@
 import { RequestHandler } from 'express';
+import {
+  generatePassword,
+  verifyPassword,
+} from '../../security/passwordHashing';
 import UserService from '../../service/user.service';
 import CreateUserInput from '../../type/user/create.input';
-import { BadRequestError } from '../../util/customErrors';
+import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 
-// 예시 controller입니다. 필요에 따라 수정하거나 삭제하셔도 됩니다.
-
-export const getUserById: RequestHandler = async (req, res, next) => {
+// POST /user/login
+export const loginUser: RequestHandler = async (req, res, next) => {
   try {
-    const id = Number(req.query.id);
+    const { username, password } = req.body;
 
-    const user = await UserService.getUserById(id);
-    if (!user) throw new BadRequestError('해당하는 유저가 없습니다.');
+    if (!username || !password)
+      throw new BadRequestError('아이디와 비밀번호를 모두 입력해주세요');
 
-    res.json(user);
+    const user = await UserService.getUserByUsername(username);
+    if (!user) throw new UnauthorizedError('해당하는 유저가 없습니다.');
+
+    const isValid = await verifyPassword(password, user.password);
+    if (!isValid) throw new UnauthorizedError('비밀번호가 일치하지 않습니다.');
+
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      displayName: user.displayName,
+    };
+
+    return res.status(200).json(user);
   } catch (error) {
     next(error);
   }
 };
 
-export const getUsersByAge: RequestHandler = async (req, res, next) => {
-  try {
-    const age = Number(req.params.age);
-
-    const users = await UserService.getUsersByAge(age);
-
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
-};
-
+// POST /user/join
 export const createUser: RequestHandler = async (req, res, next) => {
   try {
-    const { firstName, lastName, age } = req.body as CreateUserInput;
-    const createUserInput: CreateUserInput = { firstName, lastName, age };
+    const { username, displayName, password, confirmPassword, birthdate } =
+      req.body as CreateUserInput & { confirmPassword: string };
 
+    //아이디 16자 이하, 비밀번호 일치, 닉네임 길이 32자 이하, 아이디 중복 방지
+    if (!username || username.length > 16)
+      throw new BadRequestError('아이디가 적절하지 않습니다.');
+    if (!password) throw new BadRequestError('비밀번호가 비어 있습니다.');
+    if (password !== confirmPassword)
+      throw new BadRequestError('비밀번호가 서로 일치 하지 않습니다.');
+    if (!displayName || displayName.length > 32)
+      throw new BadRequestError('닉네임이 적절하지 않습니다.');
+
+    const existingUser = await UserService.getUserByUsername(username);
+    if (existingUser) throw new BadRequestError('이미 존재하는 아이디입니다.');
+
+    //비밀번호 해싱
+    const hashedPassword = await generatePassword(password);
+
+    const createUserInput: CreateUserInput = {
+      username,
+      displayName,
+      password: hashedPassword,
+      birthdate,
+    };
     const user = await UserService.saveUser(createUserInput);
 
-    res.status(201).json(user.id);
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//GET /user/status
+export const getStatus: RequestHandler = async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      res.status(200).json({
+        username: req.session.user.username,
+        displayName: req.session.user.displayName,
+      });
+    } else {
+      res.status(204).send('로그인 상태가 아닙니다.');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /user/logout
+export const logoutUser: RequestHandler = async (req, res, next) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) throw err;
+      else {
+        res
+          .status(200)
+          .clearCookie('connect.sid', { path: '/' })
+          .json({ message: 'Logout Success' });
+      }
+    });
   } catch (error) {
     next(error);
   }

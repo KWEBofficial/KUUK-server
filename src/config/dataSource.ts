@@ -11,7 +11,7 @@ const AppDataSource = new DataSource({
   username: DB_USER,
   password: DB_PASSWORD,
   database: DB_NAME,
-  entities: [`${__dirname}/../entity/*.entity.ts`],
+  entities: [`${__dirname}/../entity/*.entity.{ts,js}`],
   namingStrategy: new SnakeNamingStrategy(),
   logging: false, // sql query를 console에 출력하고 싶을 때는 true로 전환
   synchronize: process.env.NODE_ENV === 'prod' ? false : true,
