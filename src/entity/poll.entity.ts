@@ -2,15 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import User from './user.entity';
-import Participant from './participant.entity';
 import Candidate from './candidate.entity';
+import Participant from './participant.entity';
+import User from './user.entity';
 
 @Entity()
 export default class Poll {

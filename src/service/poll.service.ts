@@ -1,6 +1,6 @@
 import Poll from '../entity/poll.entity';
-import CreatePollInput from '../type/poll/create.input';
 import PollRepository from '../repository/poll.repository';
+import CreatePollInput from '../type/poll/create.input';
 import { InternalServerError } from '../util/customErrors';
 
 export default class PollService {
@@ -28,7 +28,10 @@ export default class PollService {
 
   static async getPollByUrl(url: string): Promise<Poll> {
     try {
-      return await PollRepository.findOneOrFail({ where: { url }, relations: ['createdUser'] });
+      return await PollRepository.findOneOrFail({
+        where: { url },
+        relations: ['createdUser'],
+      });
     } catch (error) {
       throw new InternalServerError(
         'URL로 투표 정보를 불러오는데 실패했습니다.',
@@ -39,7 +42,8 @@ export default class PollService {
   static async getPollsByUserId(userId: number): Promise<Poll[]> {
     try {
       return await PollRepository.find({
-        where: { createdUser: { id: userId } }, relations: ['candidates', 'candidates.restaurant']
+        where: { createdUser: { id: userId } },
+        relations: ['candidates', 'candidates.restaurant'],
       });
     } catch (error) {
       throw new InternalServerError(
@@ -50,10 +54,9 @@ export default class PollService {
 
   static async deletePollByPollId(pollId: number) {
     try {
-      PollRepository.query(
-        'UPDATE poll SET is_deleted = true WHERE id = ?',
-        [pollId]
-      );
+      PollRepository.query('UPDATE poll SET is_deleted = true WHERE id = ?', [
+        pollId,
+      ]);
     } catch (error) {
       throw new InternalServerError(
         '투표 아이디로 투표 정보를 삭제하는데 실패했습니다.',

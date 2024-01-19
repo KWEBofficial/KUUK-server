@@ -1,12 +1,6 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import User from './user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import Poll from './poll.entity';
+import User from './user.entity';
 
 @Entity()
 export default class Participant {
@@ -22,7 +16,7 @@ export default class Participant {
     length: 100,
     nullable: false,
     default: '아무개',
-    comment: '참여자 이름'
+    comment: '참여자 이름',
   })
   displayName!: string;
 

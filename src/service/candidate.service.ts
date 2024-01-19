@@ -1,12 +1,12 @@
-import Poll from '../entity/poll.entity';
+import { In } from 'typeorm';
 import Candidate from '../entity/candidate.entity';
+import Poll from '../entity/poll.entity';
 import Restaurant from '../entity/restaurant.entity';
 import CandidateRepository from '../repository/candidate.repository';
-import LocationRepository from '../repository/location.repository';
 import CategoryRepository from '../repository/category.repository';
+import LocationRepository from '../repository/location.repository';
 import RestaurantRepository from '../repository/restaurant.repository';
 import { InternalServerError } from '../util/customErrors';
-import { In } from 'typeorm';
 
 export default class CandidateService {
   static async getCandidatesByPollId(pollId: number): Promise<Candidate[]> {

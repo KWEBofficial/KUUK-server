@@ -51,7 +51,6 @@ export const loginGuest: RequestHandler = async (req, res, next) => {
       displayName: guest.displayName,
     };
     res.json(guest);
-    // return res.redirect(`/poll/${guest.poll.id}`);
   } catch (error) {
     next(error);
   }

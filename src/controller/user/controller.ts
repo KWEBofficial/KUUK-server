@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express';
-import UserService from '../../service/user.service';
-import CreateUserInput from '../../type/user/create.input';
-import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 import {
   generatePassword,
   verifyPassword,
 } from '../../security/passwordHashing';
+import UserService from '../../service/user.service';
+import CreateUserInput from '../../type/user/create.input';
+import { BadRequestError, UnauthorizedError } from '../../util/customErrors';
 
 // POST /user/login
 export const loginUser: RequestHandler = async (req, res, next) => {
@@ -27,7 +27,6 @@ export const loginUser: RequestHandler = async (req, res, next) => {
       displayName: user.displayName,
     };
 
-    // 메인 페이지로 redirection
     return res.status(200).json(user);
   } catch (error) {
     next(error);
@@ -63,7 +62,6 @@ export const createUser: RequestHandler = async (req, res, next) => {
     };
     const user = await UserService.saveUser(createUserInput);
 
-    // 로그인 페이지로 redirection 추가 필요
     res.status(201).json(user);
   } catch (error) {
     next(error);
